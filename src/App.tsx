@@ -369,8 +369,25 @@ const FormSection = () => {
     telefono: ''
   });
 
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    if (formData.nombre.length < 5) newErrors.nombre = "Por favor, ingresa tu nombre completo.";
+    if (!/^\d{8}$/.test(formData.telefono.replace(/\s/g, ''))) {
+      newErrors.telefono = "El teléfono debe tener 8 dígitos (Ej: 59686584).";
+    }
+    if (!formData.localidad) newErrors.localidad = "Indícanos de dónde nos contactas.";
+    if (!formData.tipoTrabajo) newErrors.tipoTrabajo = "Selecciona una categoría de trabajo.";
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validate()) return;
+
     const msg = `SOLICITUD DE ASESORÍA\n\nNombre: ${formData.nombre}\nLocalidad: ${formData.localidad}\nTipo de Trabajo: ${formData.tipoTrabajo}\nEducación: ${formData.educacion}\nTeléfono: ${formData.telefono}\n\nMe gustaría agendar una cita con un asesor.`;
     openWhatsApp(msg);
   };
@@ -408,44 +425,56 @@ const FormSection = () => {
             <div>
               <label className="block text-sm font-bold text-slate-700 mb-1">Nombre Completo</label>
               <input 
-                required
                 type="text" 
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
+                className={`w-full bg-slate-50 border ${errors.nombre ? 'border-red-500' : 'border-slate-200'} rounded-xl px-4 py-3 outline-none`}
                 placeholder="Ej. Pedro Pérez"
                 value={formData.nombre}
-                onChange={e => setFormData({...formData, nombre: e.target.value})}
+                onChange={e => {
+                  setFormData({...formData, nombre: e.target.value});
+                  if (errors.nombre) setErrors({...errors, nombre: ''});
+                }}
               />
+              {errors.nombre && <p className="text-red-500 text-xs mt-1">{errors.nombre}</p>}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-1">Localidad</label>
                 <input 
-                  required
                   type="text" 
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
+                  className={`w-full bg-slate-50 border ${errors.localidad ? 'border-red-500' : 'border-slate-200'} rounded-xl px-4 py-3 outline-none`}
                   placeholder="Ej. Quetzaltenango"
                   value={formData.localidad}
-                  onChange={e => setFormData({...formData, localidad: e.target.value})}
+                  onChange={e => {
+                    setFormData({...formData, localidad: e.target.value});
+                    if (errors.localidad) setErrors({...errors, localidad: ''});
+                  }}
                 />
+                {errors.localidad && <p className="text-red-500 text-xs mt-1">{errors.localidad}</p>}
               </div>
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-1">Teléfono</label>
                 <input 
-                  required
                   type="text" 
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
+                  className={`w-full bg-slate-50 border ${errors.telefono ? 'border-red-500' : 'border-slate-200'} rounded-xl px-4 py-3 outline-none`}
                   placeholder="5968 6584"
                   value={formData.telefono}
-                  onChange={e => setFormData({...formData, telefono: e.target.value})}
+                  onChange={e => {
+                    setFormData({...formData, telefono: e.target.value});
+                    if (errors.telefono) setErrors({...errors, telefono: ''});
+                  }}
                 />
+                {errors.telefono && <p className="text-red-500 text-xs mt-1">{errors.telefono}</p>}
               </div>
             </div>
             <div>
               <label className="block text-sm font-bold text-slate-700 mb-1">Tipo de Trabajo a Solicitar</label>
               <select 
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
+                className={`w-full bg-slate-50 border ${errors.tipoTrabajo ? 'border-red-500' : 'border-slate-200'} rounded-xl px-4 py-3 outline-none`}
                 value={formData.tipoTrabajo}
-                onChange={e => setFormData({...formData, tipoTrabajo: e.target.value})}
+                onChange={e => {
+                  setFormData({...formData, tipoTrabajo: e.target.value});
+                  if (errors.tipoTrabajo) setErrors({...errors, tipoTrabajo: ''});
+                }}
               >
                 <option value="">Selecciona una categoría...</option>
                 <option value="Agricultura">Agricultura / Campo (H2A)</option>
@@ -456,6 +485,7 @@ const FormSection = () => {
                 <option value="Jardineria">Jardinería / Paisajismo</option>
                 <option value="Otros">Otros (Especificar en entrevista)</option>
               </select>
+              {errors.tipoTrabajo && <p className="text-red-500 text-xs mt-1">{errors.tipoTrabajo}</p>}
             </div>
             <div>
               <label className="block text-sm font-bold text-slate-700 mb-1">Nivel Educativo / Experiencia</label>
