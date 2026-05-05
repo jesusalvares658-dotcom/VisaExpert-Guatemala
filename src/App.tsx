@@ -32,7 +32,7 @@ const Navbar = () => (
   <nav className="fixed top-0 w-full bg-white/90 backdrop-blur-md z-50 border-b border-gray-100">
     <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
       <div className="flex items-center gap-2">
-        <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">VE</div>
+        <img src="/logo.png" alt="VisaExpert Logo" className="w-10 h-10 object-contain rounded-full border border-gray-100 shadow-sm" />
         <span className="font-bold text-xl tracking-tight text-slate-800">VisaExpert <span className="text-blue-600">Guatemala</span></span>
       </div>
       <div className="hidden md:flex gap-8 text-sm font-medium text-slate-600">
@@ -104,14 +104,10 @@ const Hero = () => (
           transition={{ duration: 0.5 }}
           className="rounded-3xl overflow-hidden shadow-2xl relative aspect-[4/3] bg-slate-100"
         >
-          {/* Imagen sugerida: Familia feliz o persona con pasaporte frente a un horizonte moderno */}
-          <div className="absolute inset-0 flex items-center justify-center text-slate-400 p-8 text-center">
-            [Insertar Aquí Imagen: Familia exitosa recibiendo sus visas o skyline de ciudad moderna]
-          </div>
           <img 
-            src="https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&q=80&w=1000" 
+            src="/banner.png" 
             alt="Visa consultation success" 
-            className="w-full h-full object-cover opacity-80"
+            className="w-full h-full object-cover"
           />
         </motion.div>
         {/* Banner flotante */}
@@ -249,12 +245,12 @@ const BotAlice = () => {
             {/* Header Bot */}
             <div className="p-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full border-2 border-white/50 overflow-hidden bg-slate-200">
-                  <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100" alt="Alice Avatar" className="w-full h-full object-cover" />
+                <div className="w-10 h-10 rounded-full border-2 border-white/50 overflow-hidden bg-white">
+                  <img src="/logo.png" alt="VisaExpert Logo" className="w-full h-full object-contain p-0.5" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-sm">Alice</h4>
-                  <p className="text-[10px] opacity-80">Asistente Experta</p>
+                  <h4 className="font-bold text-sm">VisaExpert</h4>
+                  <p className="text-[10px] opacity-80">Asesoría Profesional</p>
                 </div>
               </div>
               <div className="flex items-center gap-1">
@@ -300,12 +296,12 @@ const BotAlice = () => {
       </AnimatePresence>
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="w-16 h-16 rounded-full bg-blue-600 text-white shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all relative group overflow-hidden"
+        className="w-16 h-16 rounded-full bg-white border border-gray-100 text-blue-600 shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all relative group overflow-hidden"
       >
-        <div className="absolute inset-0 group-hover:opacity-0 transition-opacity">
-           <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100" alt="Alice" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 transition-opacity">
+           <img src="/logo.png" alt="Alice" className="w-full h-full object-contain p-2" />
         </div>
-        <MessageCircle size={30} className="relative z-10 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <MessageCircle size={30} className="relative z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-blue-600 text-white w-full h-full p-4" />
       </button>
     </div>
   );
@@ -527,14 +523,25 @@ const Downloads = () => {
     doc.setFillColor(30, 41, 59); // slate-900
     doc.rect(0, 0, pageWidth, 45, 'F');
     
+    try {
+      // Add Logo image to PDF
+      doc.addImage("/logo.png", "PNG", 15, 10, 25, 25);
+    } catch (e) {
+      // Fallback if image fails to load
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(24);
+      doc.setFont("helvetica", "bold");
+      doc.text("VE", 20, 25);
+    }
+
     // Company Logo / Name
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(24);
+    doc.setFontSize(22);
     doc.setFont("helvetica", "bold");
-    doc.text("VisaExpert", 20, 22);
-    doc.setFontSize(14);
+    doc.text("VisaExpert", 45, 22);
+    doc.setFontSize(12);
     doc.setFont("helvetica", "normal");
-    doc.text("Guatemala", 20, 30);
+    doc.text("Guatemala", 45, 29);
     
     // Badge "98% Éxito"
     doc.setFillColor(34, 197, 94); // green-500
@@ -717,7 +724,7 @@ export default function App() {
       <footer className="py-12 border-t border-gray-100 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm">VE</div>
+            <img src="/logo.png" alt="VisaExpert" className="w-8 h-8 object-contain rounded-full" />
             <span className="font-bold text-slate-800">VisaExpert Guatemala</span>
           </div>
           <p className="text-slate-500 text-sm">© 2026 VisaExpert | Asesoría Profesional. 98% Eficiencia.</p>
