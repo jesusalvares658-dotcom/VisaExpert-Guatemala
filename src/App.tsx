@@ -442,13 +442,20 @@ const FormSection = () => {
             </div>
             <div>
               <label className="block text-sm font-bold text-slate-700 mb-1">Tipo de Trabajo a Solicitar</label>
-              <input 
-                type="text" 
+              <select 
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
-                placeholder="Ej. Agricultura, Construcción, etc."
                 value={formData.tipoTrabajo}
                 onChange={e => setFormData({...formData, tipoTrabajo: e.target.value})}
-              />
+              >
+                <option value="">Selecciona una categoría...</option>
+                <option value="Agricultura">Agricultura / Campo (H2A)</option>
+                <option value="Construccion">Construcción / Carpintería</option>
+                <option value="Hoteleria">Hotelería / Limpieza (H2B)</option>
+                <option value="Restaurantes">Restaurantes / Cocina</option>
+                <option value="Mecanica">Mecánica / Soldadura</option>
+                <option value="Jardineria">Jardinería / Paisajismo</option>
+                <option value="Otros">Otros (Especificar en entrevista)</option>
+              </select>
             </div>
             <div>
               <label className="block text-sm font-bold text-slate-700 mb-1">Nivel Educativo / Experiencia</label>
