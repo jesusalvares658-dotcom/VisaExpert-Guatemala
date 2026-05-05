@@ -13,6 +13,9 @@ export const ALICE_KNOWLEDGE = {
   hours: "Atendemos de Lunes a Viernes de 8:00 AM a 5:00 PM y Sábados de 8:00 AM a 12:00 PM.",
   payment_methods: "Aceptamos depósitos bancarios y transferencias a cuentas de Banrural, Banco Industrial y BAC. Una vez llenes el formulario de solicitud en la web, te enviaremos los números de cuenta.",
   denial_help: "Si te han negado la visa antes, ¡no te rindas! Analizamos las causas del rechazo anterior y fortalecemos tu perfil para una nueva solicitud más exitosa.",
+  h2a: "La **Visa H-2A** es para trabajadores agrícolas temporales. Para aplicar, necesitas una oferta de empleo de un empleador en EE.UU. que demuestre que no hay suficientes trabajadores estadounidenses disponibles. Nosotros te asesoramos con el llenado del formulario y la preparación para tu entrevista consular.",
+  h2b: "La **Visa H-2B** es para trabajadores temporales no agrícolas (como construcción, hotelería, jardinería o limpieza). Al igual que la H-2A, requiere un patrocinador o empleador en EE.UU. Es una excelente opción para quienes buscan experiencia laboral temporal en el extranjero.",
+  b1b2: "La **Visa B1/B2** es la más solicitada. La **B1** es para viajes de negocios (reuniones, conferencias) y la **B2** para turismo, vacaciones o visitas familiares. Generalmente se otorga por 10 años y la clave del éxito es demostrar 'arraigo' (lazos fuertes que te obliguen a volver a Guatemala).",
   services: [
     "Asesoría para Visas de Trabajo (H2A, H2B).",
     "Visas de Turismo y Negocios (B1/B2).",

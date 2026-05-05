@@ -224,8 +224,12 @@ const BotAlice = () => {
         response = ALICE_KNOWLEDGE.denial_help;
       } else if (userMsg.includes('visa') && (userMsg.includes('eeuu') || userMsg.includes('usa') || userMsg.includes('canada'))) {
         response = `Manejamos trámites para EE. UU. (DS-160) y Canadá (ETA/Visas). Tenemos una tasa de éxito del 98%. ¿Para qué país te interesa viajar?`;
-      } else if (userMsg.includes('trabajo') || userMsg.includes('h2a') || userMsg.includes('h2b')) {
-        response = "Somos especialistas en **Visas de Trabajo**. Te ayudamos a preparar tu perfil laboral para que el cónsul vea que eres un candidato apto. ¿Tienes ya alguna oferta o buscas asesoría general?";
+      } else if (userMsg.includes('h2a') || (userMsg.includes('trabajo') && userMsg.includes('agricola'))) {
+        response = ALICE_KNOWLEDGE.h2a;
+      } else if (userMsg.includes('h2b') || (userMsg.includes('trabajo') && !userMsg.includes('agricola'))) {
+        response = ALICE_KNOWLEDGE.h2b;
+      } else if (userMsg.includes('b1') || userMsg.includes('b2') || userMsg.includes('turismo') || userMsg.includes('negocio') || userMsg.includes('paseo')) {
+        response = ALICE_KNOWLEDGE.b1b2;
       } else if (userMsg.includes('asesor') || userMsg.includes('humano') || userMsg.includes('whatsapp') || userMsg.includes('contacto')) {
         response = `¡Claro! Puedes escribir directamente a nuestro WhatsApp oficial: [${ALICE_KNOWLEDGE.whatsapp}](https://wa.me/502${ALICE_KNOWLEDGE.whatsapp}) o dejar tus datos en el formulario de abajo para agendar una cita.`;
       }
