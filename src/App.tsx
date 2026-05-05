@@ -487,67 +487,106 @@ const Downloads = () => {
   const generatePDF = (title: string, items: string[], header: string) => {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
     
-    // Header - Professional blue bar
+    // --- Background Decor ---
+    doc.setFillColor(248, 250, 252); // slate-50
+    doc.rect(0, 0, pageWidth, pageHeight, 'F');
+
+    // --- Main Header ---
     doc.setFillColor(30, 41, 59); // slate-900
-    doc.rect(0, 0, pageWidth, 40, 'F');
+    doc.rect(0, 0, pageWidth, 45, 'F');
     
-    // Company Name
+    // Company Logo / Name
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(22);
+    doc.setFontSize(24);
     doc.setFont("helvetica", "bold");
-    doc.text("VisaExpert Guatemala", 20, 25);
+    doc.text("VisaExpert", 20, 22);
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "normal");
+    doc.text("Guatemala", 20, 30);
     
-    // Sub-header
+    // Badge "98% Éxito"
+    doc.setFillColor(34, 197, 94); // green-500
+    doc.roundedRect(pageWidth - 65, 15, 45, 12, 2, 2, 'F');
+    doc.setTextColor(255, 255, 255);
     doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text("Asesoría Profesional de Visas • Eficiencia del 98%", 20, 32);
-
-    // Document Title
-    doc.setTextColor(30, 41, 59);
-    doc.setFontSize(18);
     doc.setFont("helvetica", "bold");
-    doc.text(header, 20, 60);
+    doc.text("98% EFECTIVIDAD", pageWidth - 42.5, 23, { align: "center" });
 
-    // Separator line
-    doc.setDrawColor(200, 200, 200);
-    doc.line(20, 65, pageWidth - 20, 65);
+    // --- Content Section ---
+    doc.setTextColor(30, 41, 59);
+    doc.setFontSize(20);
+    doc.setFont("helvetica", "bold");
+    doc.text(header.toUpperCase(), 20, 65);
 
-    // Content
+    // Subtle line
+    doc.setDrawColor(51, 65, 85);
+    doc.setLineWidth(0.8);
+    doc.line(20, 70, 70, 70);
+
+    // Description text
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "italic");
+    doc.setTextColor(100, 116, 139);
+    doc.text("Documento oficial para clientes de VisaExpert Guatemala. Blvd. Austriaco, Zona 16.", 20, 78);
+
+    // List Logic
     doc.setFontSize(11);
-    doc.setFont("helvetica", "normal");
-    doc.setTextColor(60, 60, 60);
+    doc.setTextColor(51, 65, 85);
     
-    let yPos = 75;
+    let yPos = 90;
     items.forEach((item) => {
-      // Check if item is a main category
       if (item.startsWith("**")) {
+        // Section Title
+        yPos += 5;
+        doc.setFillColor(226, 232, 240); // slate-200
+        doc.rect(20, yPos - 6, pageWidth - 40, 9, 'F');
         doc.setFont("helvetica", "bold");
-        doc.text(item.replace(/\*\*/g, ""), 20, yPos);
-        yPos += 10;
+        doc.setTextColor(30, 41, 59);
+        doc.text(item.replace(/\*\*/g, ""), 25, yPos);
+        yPos += 12;
       } else {
+        // List Item
         doc.setFont("helvetica", "normal");
-        // Bullet point
-        doc.circle(23, yPos - 1, 0.5, 'F');
-        const splitText = doc.splitTextToSize(item, pageWidth - 45);
-        doc.text(splitText, 27, yPos);
-        yPos += (splitText.length * 7);
+        doc.setTextColor(71, 85, 105);
+        
+        // Custom Bullet
+        doc.setFillColor(59, 130, 246); // blue-500
+        doc.circle(24, yPos - 1.5, 0.8, 'F');
+
+        const splitText = doc.splitTextToSize(item, pageWidth - 50);
+        doc.text(splitText, 30, yPos);
+        yPos += (splitText.length * 7) + 2;
       }
       
-      // Page break if needed
-      if (yPos > 270) {
+      if (yPos > pageHeight - 40) {
         doc.addPage();
-        yPos = 20;
+        yPos = 30;
       }
     });
 
-    // Footer
-    const footerY = doc.internal.pageSize.getHeight() - 20;
+    // --- Professional "Seal" at bottom right ---
+    const sealX = pageWidth - 60;
+    const sealY = pageHeight - 65;
+    doc.setDrawColor(30, 41, 59);
+    doc.setLineWidth(0.5);
+    doc.circle(sealX + 20, sealY + 20, 15, 'S');
+    doc.setFontSize(7);
+    doc.text("CERTIFICADO", sealX + 20, sealY + 15, { align: "center" });
     doc.setFontSize(9);
-    doc.setTextColor(150, 150, 150);
-    doc.setDrawColor(230, 230, 230);
-    doc.line(20, footerY - 5, pageWidth - 20, footerY - 5);
-    doc.text("Dirección: Blvd. Austriaco zona 16, frente a la Embajada • WhatsApp: +502 5968 6584", pageWidth / 2, footerY, { align: "center" });
+    doc.text("VISAEXPERT", sealX + 20, sealY + 22, { align: "center" });
+    doc.setFontSize(7);
+    doc.text("GUATEMALA", sealX + 20, sealY + 28, { align: "center" });
+
+    // --- Footer ---
+    doc.setFillColor(30, 41, 59);
+    doc.rect(0, pageHeight - 20, pageWidth, 20, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "normal");
+    doc.text("Ubicación: Blvd. Austriaco frente a Embajada EE.UU, Z.16", 20, pageHeight - 9);
+    doc.text("WhatsApp: +502 5968 6584 | www.visaexpert.com.gt", pageWidth - 20, pageHeight - 9, { align: "right" });
 
     doc.save(`${title.replace(/\s+/g, '_')}.pdf`);
   };
