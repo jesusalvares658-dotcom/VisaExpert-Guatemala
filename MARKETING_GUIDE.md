@@ -68,5 +68,23 @@ Esta guía te ayudará a configurar y optimizar tus redes sociales para captar c
 
 ---
 
+## 5. Recursos del Repositorio
+Para que el proyecto se vea profesional, asegúrate de que los siguientes archivos estén en la carpeta raíz (o subidos vía el editor):
+
+- `logo.png`: El logotipo circular de VisaExpert.
+- `banner.png`: La imagen de portada con las banderas y el equipo.
+- `MARKETING_GUIDE.md`: Este documento con las estrategias.
+
+### Prompts de Generación (Backup)
+Si necesitas regenerar las imágenes, usa estos prompts:
+
+**Logo:**
+> "A professional circular seal logo for 'VisaExpert Guatemala'. The design should be minimalist and impactful, featuring a globe icon with a rising airplane silhouette in the center. Colors should be deep navy blue and metallic gold on a clean white background. Bold, sans-serif typography encircling the graphic."
+
+**Portada (Banner):**
+> "High-resolution Facebook cover banner for 'VisaExpert Guatemala'. Diverse group of smiling Guatemalan people in business suits and traditional Mayan clothing. Background with Guatemalan, USA, and Canadian flags blended artistically. Professional lighting, warm atmosphere. Text at bottom: WhatsApp 5968-6584."
+
+---
+
 ## Recomendación Final
 Publica al menos 3 TikToks por semana y comparte los mismos videos como Reels en Facebook. La constancia genera confianza.

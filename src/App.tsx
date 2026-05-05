@@ -32,7 +32,8 @@ const Navbar = () => (
   <nav className="fixed top-0 w-full bg-white/90 backdrop-blur-md z-50 border-b border-gray-100">
     <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
       <div className="flex items-center gap-2">
-        <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg italic font-serif">VE</div>
+        <img src="/logo.png" alt="VisaExpert Logo" className="w-10 h-10 object-contain rounded-full border border-gray-100 shadow-sm" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement?.querySelector('.placeholder-logo')?.classList.remove('hidden'); }} />
+        <div className="placeholder-logo hidden w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg italic font-serif">VE</div>
         <span className="font-bold text-xl tracking-tight text-slate-800">VisaExpert <span className="text-blue-600">Guatemala</span></span>
       </div>
       <div className="hidden md:flex gap-8 text-sm font-medium text-slate-600">
@@ -105,9 +106,10 @@ const Hero = () => (
           className="rounded-3xl overflow-hidden shadow-2xl relative aspect-[4/3] bg-slate-100"
         >
           <img 
-            src="https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&q=80&w=1000" 
+            src="/banner.png" 
             alt="Asesoría de Visas" 
             className="w-full h-full object-cover"
+            onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&q=80&w=1000" }}
           />
         </motion.div>
         {/* Banner flotante */}
@@ -519,26 +521,34 @@ const Downloads = () => {
     doc.setFillColor(248, 250, 252); // slate-50
     doc.rect(0, 0, pageWidth, pageHeight, 'F');
 
-    // --- Main Header ---
+    // Header - Professional blue bar
     doc.setFillColor(30, 41, 59); // slate-900
     doc.rect(0, 0, pageWidth, 45, 'F');
     
-    // Professional VE Circle Logo for PDF
-    doc.setFillColor(59, 130, 246); // Light blue
-    doc.circle(28, 22, 12, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(16);
-    doc.setFont("helvetica", "bold");
-    doc.text("VE", 28, 24, { align: "center" });
-
-    // Company Name
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(22);
-    doc.setFont("helvetica", "bold");
-    doc.text("VisaExpert", 45, 22);
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "normal");
-    doc.text("Guatemala", 45, 29);
+    // Add Logo or Fallback
+    try {
+      doc.addImage("/logo.png", "PNG", 20, 10, 25, 25);
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(22);
+      doc.setFont("helvetica", "bold");
+      doc.text("VisaExpert", 50, 22);
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "normal");
+      doc.text("Guatemala", 50, 29);
+    } catch (e) {
+      // Fallback
+      doc.setFillColor(59, 130, 246);
+      doc.circle(28, 22, 12, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(16);
+      doc.setFont("helvetica", "bold");
+      doc.text("VE", 28, 24, { align: "center" });
+      doc.setFontSize(22);
+      doc.text("VisaExpert", 45, 22);
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "normal");
+      doc.text("Guatemala", 45, 29);
+    }
     
     // Badge "98% Éxito"
     doc.setFillColor(34, 197, 94); // green-500
@@ -721,7 +731,8 @@ export default function App() {
       <footer className="py-12 border-t border-gray-100 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs shadow-sm italic font-serif">VE</div>
+            <img src="/logo.png" alt="VisaExpert" className="w-8 h-8 object-contain rounded-full border border-gray-100" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement?.querySelector('.placeholder-footer-logo')?.classList.remove('hidden'); }} />
+            <div className="placeholder-footer-logo hidden w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs shadow-sm italic font-serif">VE</div>
             <span className="font-bold text-slate-800">VisaExpert Guatemala</span>
           </div>
           <p className="text-slate-500 text-sm">© 2026 VisaExpert | Asesoría Profesional. 98% Eficiencia.</p>
