@@ -13,11 +13,20 @@ import {
   ChevronDown,
   Globe,
   Briefcase,
-  PlayCircle
+  PlayCircle,
+  ExternalLink
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ALICE_KNOWLEDGE } from './knowledge.ts';
+import { APIProvider, Map, AdvancedMarker, Pin } from '@vis.gl/react-google-maps';
 import Markdown from 'react-markdown';
+
+const API_KEY =
+  process.env.GOOGLE_MAPS_PLATFORM_KEY ||
+  (import.meta as any).env?.VITE_GOOGLE_MAPS_PLATFORM_KEY ||
+  (globalThis as any).GOOGLE_MAPS_PLATFORM_KEY ||
+  '';
+const hasValidKey = Boolean(API_KEY) && API_KEY !== 'YOUR_API_KEY';
 import { jsPDF } from 'jspdf';
 
 // --- Utility for WhatsApp Link ---
@@ -222,6 +231,11 @@ const BotAlice = () => {
         response = `Nuestros horarios son: ${ALICE_KNOWLEDGE.hours}`;
       } else if (userMsg.includes('negada') || userMsg.includes('rechazo') || userMsg.includes('fallo')) {
         response = ALICE_KNOWLEDGE.denial_help;
+      } else if (userMsg.includes('mito') || userMsg.includes('mentira') || userMsg.includes('verdad')) {
+        response = "Hay muchos **mitos sobre la visa**. Por ejemplo: \n\n" + 
+          (ALICE_KNOWLEDGE as any).myths.map((m: any) => `* **Mito:** ${m.myth}\n  **Realidad:** ${m.truth}`).join('\n\n');
+      } else if (userMsg.includes('oficina') || userMsg.includes('conocer') || userMsg.includes('tour') || userMsg.includes('recorrido')) {
+        response = (ALICE_KNOWLEDGE as any).office_tour;
       } else if (userMsg.includes('visa') && (userMsg.includes('eeuu') || userMsg.includes('usa') || userMsg.includes('canada'))) {
         response = `Manejamos trámites para EE. UU. (DS-160) y Canadá (ETA/Visas). Tenemos una tasa de éxito del 98%. ¿Para qué país te interesa viajar?`;
       } else if (userMsg.includes('h2a') || (userMsg.includes('trabajo') && userMsg.includes('agricola'))) {
@@ -697,23 +711,200 @@ const Downloads = () => {
   );
 };
 
-const VideoGallery = () => (
-  <section className="py-20 bg-slate-50">
+const InteractiveMap = () => {
+  const position = { lat: 14.604113, lng: -90.478954 }; // Frente a la Embajada
+
+  if (!hasValidKey) {
+    return (
+      <section className="py-20 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="bg-white p-12 rounded-3xl shadow-xl text-center flex flex-col items-center gap-6 border border-slate-100">
+            <div className="w-20 h-20 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center">
+              <MapPin size={40} />
+            </div>
+            <div className="max-w-md">
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">Ubicación Estratégica</h2>
+              <p className="text-slate-600 mb-8">
+                Estamos ubicados en Boulevard Austriaco, zona 16, frente a la Embajada de Estados Unidos. 
+                Para ver el mapa interactivo, se requiere una configuración adicional.
+              </p>
+              
+              <div className="bg-slate-50 p-6 rounded-2xl text-left text-sm space-y-4 mb-8">
+                <p className="font-bold text-slate-800 flex items-center gap-2">
+                  <X className="text-red-500" size={16} /> Google Maps API Key Requerida
+                </p>
+                <p><strong>Paso 1:</strong> <a href="https://console.cloud.google.com/google/maps-apis/start" target="_blank" rel="noopener" className="text-blue-600 underline">Obtén una API Key</a></p>
+                <p><strong>Paso 2:</strong> Agrégala como secreto en AI Studio:</p>
+                <ul className="list-disc pl-5 space-y-1 text-slate-500">
+                  <li>Abre <strong>Settings</strong> (icono ⚙️ arriba a la derecha)</li>
+                  <li>Selecciona <strong>Secrets</strong></li>
+                  <li>Crea <code>GOOGLE_MAPS_PLATFORM_KEY</code></li>
+                  <li>Pega tu llave y presiona Enter</li>
+                </ul>
+              </div>
+
+              <a 
+                href="https://maps.app.goo.gl/arCh7pbgHUQxHhap6" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-blue-600 text-white px-8 py-4 rounded-full font-bold shadow-lg hover:bg-blue-700 transition-all"
+              >
+                Abrir en Google Maps <ExternalLink size={18} />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="py-20 bg-white">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-6">
+          <div className="space-y-4">
+            <h2 className="text-3xl font-bold text-slate-900">Ubicación Interactiva</h2>
+            <p className="text-slate-600">Visítanos directamente frente a la Embajada de Estados Unidos.</p>
+          </div>
+          <a 
+            href="https://maps.app.goo.gl/arCh7pbgHUQxHhap6" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-blue-600 font-bold hover:underline"
+          >
+            Ver en pantalla completa <ExternalLink size={18} />
+          </a>
+        </div>
+        
+        <div className="rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-slate-50 h-[500px] relative">
+          <APIProvider apiKey={API_KEY} version="weekly">
+            <Map
+              defaultCenter={position}
+              defaultZoom={17}
+              mapId="VISAEXPERT_MAP_ID"
+              internalUsageAttributionIds={['gmp_mcp_codeassist_v1_aistudio']}
+              style={{ width: '100%', height: '100%' }}
+              gestureHandling={'greedy'}
+              disableDefaultUI={false}
+            >
+              <AdvancedMarker position={position} title="VisaExpert Guatemala">
+                <Pin background="#2563eb" glyphColor="#fff" borderColor="#1e40af" />
+              </AdvancedMarker>
+            </Map>
+          </APIProvider>
+          
+          <div className="absolute bottom-6 left-6 right-6 md:right-auto md:w-80 bg-white/90 backdrop-blur-md p-6 rounded-3xl shadow-xl border border-white/20">
+            <h4 className="font-bold text-slate-900 mb-1">VisaExpert Guatemala</h4>
+            <p className="text-xs text-slate-600 mb-3">Blvd. Austriaco 11-51, Zona 16, frente a la Embajada EE.UU.</p>
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] uppercase tracking-widest font-bold text-green-600">Abierto ahora</span>
+              <a href={`https://wa.me/502${ALICE_KNOWLEDGE.whatsapp}`} className="text-blue-600 text-xs font-bold hover:underline">Cómo llegar</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const MythsSection = () => (
+  <section className="py-20 bg-white">
     <div className="max-w-7xl mx-auto px-4">
-      <h2 className="text-3xl font-bold text-center mb-12">Videos Informativos</h2>
+      <h2 className="text-3xl font-bold text-center text-slate-900 mb-12">Mitos vs Realidades</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {(ALICE_KNOWLEDGE as any).myths.map((item: any, i: number) => (
+          <motion.div 
+            key={i}
+            whileHover={{ y: -5 }}
+            className="p-6 rounded-2xl border border-blue-50 bg-blue-50/30 space-y-3"
+          >
+            <div className="flex items-start gap-3">
+              <div className="mt-1 p-1 bg-red-100 text-red-600 rounded-full"><X size={14} /></div>
+              <p className="font-bold text-slate-800">{item.myth}</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="mt-1 p-1 bg-green-100 text-green-600 rounded-full"><CheckCircle2 size={14} /></div>
+              <p className="text-slate-600 text-sm">{item.truth}</p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
+const OfficeTour = () => (
+  <section className="py-20 bg-slate-50 overflow-hidden">
+    <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center gap-12">
+      <div className="flex-1 order-2 md:order-1">
+        <div className="relative group">
+          <div className="absolute -inset-4 bg-blue-600/10 rounded-[2rem] blur-2xl group-hover:bg-blue-600/20 transition-all"></div>
+          <div className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl bg-slate-200 border-4 border-white">
+            <img 
+              src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1000" 
+              className="w-full h-full object-cover" 
+              alt="Nuestras oficinas"
+            />
+            <div className="absolute inset-0 bg-black/20 flex items-center justify-center group-hover:bg-black/10 transition-colors">
+              <PlayCircle size={64} className="text-white drop-shadow-lg" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="flex-1 order-1 md:order-2 space-y-6">
+        <h2 className="text-4xl font-bold text-slate-900 leading-tight">Visítanos y siéntete como en casa</h2>
+        <p className="text-lg text-slate-600 leading-relaxed italic">
+          "Estamos ubicados estratégicamente justo frente a la entrada principal de la Embajada de Estados Unidos."
+        </p>
+        <p className="text-slate-600">
+           {(ALICE_KNOWLEDGE as any).office_tour}
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 pt-4">
+          <a href={`https://wa.me/502${ALICE_KNOWLEDGE.whatsapp}`} className="bg-blue-600 text-white px-8 py-4 rounded-full font-bold shadow-lg hover:shadow-blue-200 transition-all flex items-center justify-center gap-2" target="_blank" rel="noopener noreferrer">
+            Agendar cita <Phone size={18} />
+          </a>
+          <a href="https://maps.app.goo.gl/arCh7pbgHUQxHhap6" target="_blank" rel="noopener noreferrer" className="bg-white text-slate-700 border border-slate-200 px-8 py-4 rounded-full font-bold shadow-sm hover:bg-slate-50 transition-all flex items-center justify-center gap-2">
+            Ver ubicación <MapPin size={18} className="text-blue-600" />
+          </a>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="flex -space-x-3">
+            {[1,2,3,4].map(i => (
+              <div key={i} className="w-10 h-10 rounded-full border-2 border-white overflow-hidden bg-slate-100">
+                <img src={`https://i.pravatar.cc/100?u=office${i}`} alt="Avatar" />
+              </div>
+            ))}
+          </div>
+          <p className="text-sm font-medium text-slate-500">Nuestro equipo está listo para recibirte.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+);
+
+const VideoGallery = () => (
+  <section className="py-20 bg-slate-900 text-white">
+    <div className="max-w-7xl mx-auto px-4">
+      <div className="text-center mb-16 space-y-4">
+        <h2 className="text-3xl md:text-4xl font-bold">Videos Informativos</h2>
+        <p className="text-slate-400">Consejos rápidos y educativos sobre tu trámite.</p>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {[1, 2].map(i => (
-          <div key={i} className="aspect-video bg-slate-200 rounded-3xl overflow-hidden shadow-lg relative group cursor-pointer border border-slate-300">
-             <div className="absolute inset-0 flex items-center justify-center text-slate-500 font-bold p-8 text-center bg-slate-100/50">
-                [Aquí puedes agregar tus videos informativos de TikTok o YouTube]
+        {[
+          { title: "Mitos sobre la visa B1/B2", desc: "Lo que el cónsul realmente busca." },
+          { title: "Recorrido por nuestras oficinas", desc: "Conoce dónde preparamos tu éxito." }
+        ].map((v, i) => (
+          <div key={i} className="aspect-video bg-slate-800 rounded-3xl overflow-hidden shadow-lg relative group cursor-pointer border border-white/5">
+             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent p-8 flex flex-col justify-end">
+                <h4 className="text-xl font-bold mb-1">{v.title}</h4>
+                <p className="text-slate-400 text-sm">{v.desc}</p>
              </div>
              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                <PlayCircle size={64} className="text-white drop-shadow-lg" />
+                <PlayCircle size={64} className="text-white/50 group-hover:text-white drop-shadow-lg transition-all" />
              </div>
           </div>
         ))}
       </div>
-      <p className="text-center mt-8 text-slate-500 text-sm">Sugerencia: "Mitos sobre la visa" y "Recorrido por nuestras oficinas".</p>
     </div>
   </section>
 );
@@ -726,6 +917,9 @@ export default function App() {
         <Hero />
         <Services />
         <Process />
+        <OfficeTour />
+        <InteractiveMap />
+        <MythsSection />
         <VideoGallery />
         <Testimonials />
         <Downloads />
@@ -740,6 +934,15 @@ export default function App() {
             <span className="font-bold text-slate-800">VisaExpert Guatemala</span>
           </div>
           <p className="text-slate-500 text-sm">© 2026 VisaExpert | Asesoría Profesional. 98% Eficiencia.</p>
+          <div className="flex items-center gap-4 text-sm text-slate-500">
+            <a href="https://maps.app.goo.gl/arCh7pbgHUQxHhap6" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 flex items-center gap-1 transition-colors">
+              <MapPin size={14} /> Ubicación
+            </a>
+            <span>•</span>
+            <a href={`https://wa.me/502${ALICE_KNOWLEDGE.whatsapp}`} target="_blank" rel="noopener noreferrer" className="hover:text-green-600 flex items-center gap-1 transition-colors">
+              <Phone size={14} /> WhatsApp
+            </a>
+          </div>
           <div className="flex gap-6">
             <a href="#" className="text-slate-400 hover:text-blue-600 transition-colors">TikTok</a>
             <a href="#" className="text-slate-400 hover:text-blue-600 transition-colors">Facebook</a>

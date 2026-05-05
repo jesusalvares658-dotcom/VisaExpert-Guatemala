@@ -86,5 +86,16 @@ Si necesitas regenerar las imágenes, usa estos prompts:
 
 ---
 
+## 6. Configuración de Mapas Interactivos
+Para que el mapa interactivo funcione correctamente, se requiere una **Google Maps Platform API Key**.
+
+1. Ve a [Google Cloud Console](https://console.cloud.google.com/google/maps-apis/start).
+2. Crea un proyecto y habilita "Maps JavaScript API".
+3. Genera una API Key.
+4. En **AI Studio**, ve a **Settings (⚙️)** -> **Secrets**.
+5. Crea un secreto llamado `GOOGLE_MAPS_PLATFORM_KEY` y pega tu llave.
+
+---
+
 ## Recomendación Final
 Publica al menos 3 TikToks por semana y comparte los mismos videos como Reels en Facebook. La constancia genera confianza.
