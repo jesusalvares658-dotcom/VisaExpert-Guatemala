@@ -1,0 +1,12 @@
+{
+  "name": "VisaExpert Guatemala",
+  "description": "Agencia profesional de asesoría para trámites de visas a Estados Unidos y Canadá con sede en Ciudad de Guatemala.",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "AI-powered assistant",
+    "Visa application management",
+    "Digital document guidance"
+  ]
+}
